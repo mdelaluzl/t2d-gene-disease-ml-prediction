@@ -1,2 +1,143 @@
 # t2d-gene-disease-ml-prediction
-Predicting gene disease associations in type 2 diabetes through machine learning applied to single-cell RNA-seq data.
+
+This repository contains the analysis pipeline and machine learning experiments developed for the paper **Predicting Gene–Disease Associations in Type 2 Diabetes Using Machine Learning on Single-Cell RNA-Seq Data**.
+
+The methodology integrates preprocessing of single-cell RNA-seq (scRNA-seq) data with supervised machine learning models to explore gene expression patterns and evaluate their predictive power for identifying diabetic versus non-diabetic pancreatic β-cells.
+
+---
+
+## Repository Structure
+
+- `README.md`  
+  Project overview, data sources, usage instructions, and data provenance.
+
+- `code/`  
+  Jupyter notebooks containing all analysis and machine learning workflows.
+  
+  - `1_atlas_analysis.ipynb`  
+    Preprocessing of scRNA-seq data from the Mouse Islet Atlas.  
+    Includes filtering of adult pancreatic β-cells, normalization,
+    log-transformation, and selection of highly variable genes.
+
+  - `2-1_ML_ETC_MDI.ipynb`  
+    Trains an Extra Trees Classifier (ETC) to classify diabetic vs.
+    non-diabetic β-cells and ranks genes using Mean Decrease in Impurity (MDI).
+
+  - `2-2_ML_PLSDA_VIP.ipynb`  
+    Implements Partial Least Squares Discriminant Analysis (PLS-DA) and
+    computes Variable Importance in Projection (VIP) scores for gene-level
+    interpretation.
+
+- `data/`  
+  Processed datasets generated during this project and used as input for
+  machine learning models.
+  
+  - `mouse_atlas_processed_ML.h5ad`  
+    Filtered and processed scRNA-seq dataset containing adult pancreatic
+    β-cells used for downstream ML analysis.
+
+- `hrovatin_paper_code_and_data_analysis/`  
+  Auxiliary data files obtained from the original Mouse Islet Atlas
+  repository, required for reference mapping and preprocessing steps.
+  
+  - `adata_query.h5ad`  
+  - `adata_ref.h5ad`  
+  - `adata_ref_latent.h5ad`  
+  - `params.pkl`  
+  - `scArches.json`
+
+---
+
+## Usage
+
+Run the notebooks in the following order:
+
+1. **Preprocessing**  
+   Open `atlas_analysis_v3.ipynb` to filter and preprocess the scRNA-seq data from the Mouse Islet Atlas (`.h5ad` format).  
+   - Isolate adult β-cells (normal vs. T2D).  
+   - Normalize and log-transform gene expression.  
+   - Select highly variable genes for analysis.
+
+2. **PLS-DA with VIP Scores**  
+   Open `ML_PLSDA_VIP.ipynb` to perform classification with PLS-DA.  
+   - Reduce data into supervised latent components.  
+   - Classify cells into diabetic vs. control.  
+   - Compute standard metrics: accuracy, precision, recall, F1-score, and AUC-ROC.  
+   - Extract VIP scores to identify the most influential genes.
+
+3. **Extra Trees Classifier with MDI**  
+   Open `ML_ETC_MDI_v3.ipynb` to train an Extra Trees Classifier.  
+   - Perform cross-validation with balanced classes.  
+   - Compute standard metrics: accuracy, precision, recall, F1-score, and AUC-ROC.  
+   - Rank genes by Mean Decrease in Impurity (MDI).
+
+---
+
+## Data Resources (Mouse Islet Atlas)
+
+This project relies on the **Mouse Islet Atlas (MIA)**, originally published by Hrovatin *et al.* (2023) in *Nature Metabolism*:
+
+> Hrovatin, K. *et al.* (2023). *Delineating mouse β-cell identity during lifetime and in diabetes with a single cell atlas*.  
+> Nature Metabolism, 5, 1615–1637.  
+> https://doi.org/10.1038/s42255-023-00876-x
+
+### External links
+
+- Interactive dataset (CellxGene):  
+  https://cellxgene.cziscience.com/collections/296237e2-393d-4e31-b590-b03f74ac5070
+
+- Original GitHub repository (Theis Lab):  
+  https://github.com/theislab/mouse_cross-condition_pancreatic_islet_atlas
+
+### Local files
+
+The following pre-generated files from the original paper are required before running `atlas_analysis_v3.ipynb`:
+
+- `adata_query.h5ad`  
+- `adata_ref.h5ad`  
+- `adata_ref_latent.h5ad`  
+- `params.pkl`  
+- `scArches.json`
+
+These files must be downloaded from the original Mouse Islet Atlas resources and stored locally.
+
+**Important:** In `atlas_analysis_v3.ipynb`, file paths must be edited to match the local location of these files.
+
+---
+
+## Acknowledgements
+
+This repository makes use of data, reference atlases, and auxiliary files generated as part of the **Mouse pancreatic islet scRNA-seq atlas across sexes, ages, and stress conditions including diabetes**, developed by Hrovatin *et al.* and the Theis Lab.
+
+All original datasets, preprocessing pipelines, reference models, and associated resources remain the intellectual property of the original authors. This repository does not claim ownership over any third-party data or code.
+
+---
+
+## Data usage clarification
+
+The third-party data used in this repository are employed exclusively for downstream analysis, feature extraction, and machine learning modeling.
+
+Unless explicitly stated, the original data files are not modified. Any transformations applied (e.g. filtering, normalization, latent embedding extraction, or feature selection) are performed solely for analytical purposes and do not constitute a redistribution of the original resource.
+
+All trained machine learning models, derived results, performance evaluations, and biological interpretations presented in this repository constitute original work.
+
+---
+
+## Requirements
+
+The following libraries are required (see `requirements.txt`):
+
+```
+scarches==0.6.1
+scrublet==0.2.3
+gseapy==1.0.6
+mygene==3.2.2
+anndata2ri==1.3.2
+yq==3.4.3
+```
+
+---
+
+## Reproducibility
+
+All notebooks were executed in a conda environment on macOS.
